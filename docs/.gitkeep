@@ -1,0 +1,10 @@
+# Documentation
+
+Supplementary project documentation, architecture notes, ADRs, performance budgets, and screenshots.
+
+Root-level docs (`README.md`, `PROJECT_PLAN.md`, etc.) live at the repository root.
+
+Planned subfolders:
+
+- `screenshots/` — README and release screenshots
+- `adr/` — Architecture Decision Records

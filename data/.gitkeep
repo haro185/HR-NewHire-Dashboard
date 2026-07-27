@@ -1,0 +1,11 @@
+# Data
+
+JSON datasets and schema definitions.
+
+Use synthetic sample data only — never commit real employee PII.
+
+Planned files (Phase 1):
+
+- `schema.json`
+- `sample-new-hires.json`
+- `fixtures/`
