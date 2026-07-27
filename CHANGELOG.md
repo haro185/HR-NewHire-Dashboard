@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Sprint 2 UI foundation:
+  - `index.html` — semantic dashboard shell with sidebar, header, KPI grid, chart placeholders, insight panel, and data table placeholder
+  - `css/reset.css`, `css/variables.css`, `css/layout.css`, `css/components.css`, `css/dashboard.css`, `css/responsive.css`, `css/dark.css`
+  - `js/app.js` — sidebar toggle, keyboard navigation, focus management (no dark mode logic)
+  - Premium design system: Inter typography, Fabric/Power BI–inspired layout, 200ms transitions, responsive breakpoints
 - Sprint 1 project foundation:
   - `README.md` — project overview, installation, GitHub Pages deployment
   - `PROJECT_PLAN.md` — phased delivery plan (Phases 1–8)

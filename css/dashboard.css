@@ -1,0 +1,58 @@
+/* Dashboard-specific layout grids */
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+/* KPI grid — 6 cards */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+/* Primary charts — 2 columns */
+.chart-grid--primary {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+/* Secondary charts — 4 columns */
+.chart-grid--secondary {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+/* Staggered fade-in for dashboard sections */
+.dashboard > .section,
+.dashboard > .kpi-grid,
+.dashboard > .chart-grid--primary,
+.dashboard > .chart-grid--secondary,
+.dashboard > .insight-panel,
+.dashboard > .table-panel {
+  animation: fade-in var(--duration-slow) var(--ease-out) backwards;
+}
+
+.kpi-grid {
+  animation-delay: 50ms;
+}
+
+.chart-grid--primary {
+  animation-delay: 100ms;
+}
+
+.chart-grid--secondary {
+  animation-delay: 150ms;
+}
+
+.dashboard .insight-panel {
+  animation-delay: 200ms;
+}
+
+.dashboard .table-panel {
+  animation-delay: 250ms;
+}
