@@ -32,15 +32,18 @@
 .advanced-kpi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 14px;
+  gap: var(--space-4, 16px);
+  align-items: stretch;
 }
 .advanced-kpi-card {
-  padding: 16px 18px;
+  min-height: 112px;
+  padding: var(--space-4, 16px) 18px;
   position: relative;
   cursor: default;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 .advanced-kpi-card:hover, .advanced-kpi-card:focus-visible {
+  border-color: var(--color-border-strong, #cbd5e1);
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
   outline: none;
@@ -143,10 +146,10 @@
 
 /* ---------- Heatmap (Sprint 6) ---------- */
 .heatmap-panel { padding: 18px 20px; }
-.heatmap-scroll { overflow-x: auto; }
+.heatmap-scroll { max-height: 520px; overflow: auto; overscroll-behavior: contain; }
 .heatmap-grid { display: flex; flex-direction: column; gap: 3px; min-width: max-content; }
-.heatmap-row { display: grid; grid-template-columns: 160px repeat(var(--heatmap-cols, 12), 34px); gap: 3px; }
-.heatmap-row--header { position: sticky; top: 0; background: var(--color-surface, #fff); z-index: 1; }
+.heatmap-row { display: grid; grid-template-columns: 110px repeat(var(--heatmap-cols, 12), 34px); gap: 3px; }
+.heatmap-row--header { position: sticky; top: 0; z-index: 3; background: var(--color-surface, #fff); }
 .heatmap-cell {
   height: 30px;
   display: flex;
@@ -158,6 +161,10 @@
   padding: 0;
 }
 .heatmap-cell--label {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--color-surface, #fff);
   justify-content: flex-start;
   font-size: 12px;
   font-weight: 600;
@@ -167,27 +174,42 @@
   text-overflow: ellipsis;
   color: var(--color-text, #111827);
 }
+.heatmap-cell--corner { z-index: 4; }
 .heatmap-cell--col-label { font-size: 10px; color: var(--color-text-muted, #6b7280); font-weight: 600; }
 .heatmap-cell--data {
   cursor: pointer;
   color: #fff;
   font-weight: 700;
-  transition: transform 0.12s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
-.heatmap-cell--data:hover, .heatmap-cell--data:focus-visible { transform: scale(1.12); outline: 2px solid var(--color-primary, #2563EB); }
-.heatmap-cell--data[data-level="0"] { background: var(--color-surface-alt, #eef2f7); color: var(--color-text-subtle, #9ca3af); }
-.heatmap-cell--data[data-level="1"] { background: #bfdbfe; color: #1e3a8a; }
-.heatmap-cell--data[data-level="2"] { background: #60a5fa; }
-.heatmap-cell--data[data-level="3"] { background: #2563eb; }
-.heatmap-cell--data[data-level="4"] { background: #1e3a8a; }
+.heatmap-cell--data:hover, .heatmap-cell--data:focus-visible { transform: translateY(-2px) scale(1.08); box-shadow: 0 5px 12px rgba(15, 23, 42, 0.28); filter: brightness(1.08); outline: 2px solid var(--color-primary, #2563EB); outline-offset: 1px; position: relative; z-index: 1; }
+.heatmap-cell--data[data-level="0"] { background: #e7edf5; color: #64748b; }
+.heatmap-cell--data[data-level="1"] { background: #93c5fd; color: #172554; }
+.heatmap-cell--data[data-level="2"] { background: #3b82f6; }
+.heatmap-cell--data[data-level="3"] { background: #1d4ed8; }
+.heatmap-cell--data[data-level="4"] { background: #172554; }
 .heatmap-cell--legend { width: 16px; height: 16px; border-radius: 3px; }
-.heatmap-cell--legend[data-level="0"] { background: var(--color-surface-alt, #eef2f7); }
-.heatmap-cell--legend[data-level="1"] { background: #bfdbfe; }
-.heatmap-cell--legend[data-level="2"] { background: #60a5fa; }
-.heatmap-cell--legend[data-level="3"] { background: #2563eb; }
-.heatmap-cell--legend[data-level="4"] { background: #1e3a8a; }
+.heatmap-cell--legend[data-level="0"] { background: #e7edf5; }
+.heatmap-cell--legend[data-level="1"] { background: #93c5fd; }
+.heatmap-cell--legend[data-level="2"] { background: #3b82f6; }
+.heatmap-cell--legend[data-level="3"] { background: #1d4ed8; }
+.heatmap-cell--legend[data-level="4"] { background: #172554; }
 .heatmap-legend { display: flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 12px; color: var(--color-text-muted, #6b7280); }
-.heatmap-empty { padding: 24px; text-align: center; color: var(--color-text-muted, #6b7280); font-size: 13px; }
+.heatmap-empty, .timeline-empty {
+  display: grid;
+  place-items: center;
+  min-height: 112px;
+  padding: var(--space-5, 20px);
+  border: 1px dashed var(--color-border, #e2e8f0);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--color-surface-alt, #f8fafc);
+  color: var(--color-text-muted, #6b7280);
+  font-size: 13px;
+  text-align: center;
+}
+.heatmap-footer { display: flex; grid-column: 1 / -1; align-items: center; justify-content: space-between; gap: 12px; min-height: 30px; margin-top: 5px; color: var(--color-text-muted, #6b7280); font-size: 12px; }
+.heatmap-toggle { border: 1px solid var(--color-border, #e2e8f0); border-radius: 6px; padding: 5px 10px; background: var(--color-surface, #fff); color: var(--color-primary, #2563eb); font: inherit; font-weight: 700; cursor: pointer; transition: background-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease; }
+.heatmap-toggle:hover, .heatmap-toggle:focus-visible { background: rgba(37, 99, 235, 0.08); box-shadow: 0 3px 8px rgba(15, 23, 42, 0.12); transform: translateY(-1px); outline: none; }
 
 /* ---------- Timeline (Sprint 6) ---------- */
 .section__header-row {
@@ -240,17 +262,18 @@
 }
 .timeline-event__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-secondary, #7C3AED); flex-shrink: 0; }
 .timeline-event__meta { color: var(--color-text-muted, #6b7280); }
-.timeline-empty { padding: 24px; text-align: center; color: var(--color-text-muted, #6b7280); font-size: 13px; }
 
 /* ---------- Loading skeleton / shimmer (Sprint 6) ---------- */
-.is-loading-skeleton { display: flex; flex-direction: column; gap: 8px; padding: 8px; }
+.is-loading-skeleton { display: flex; flex-direction: column; gap: var(--space-2, 8px); padding: var(--space-4, 16px); }
 .skeleton-bar {
-  height: 14px;
+  height: 16px;
   border-radius: 6px;
   background: linear-gradient(90deg, var(--color-border, #e2e8f0) 25%, var(--color-surface-alt, #f1f5f9) 50%, var(--color-border, #e2e8f0) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s ease-in-out infinite;
 }
+.skeleton-bar:nth-of-type(2) { width: 82%; }
+.skeleton-bar:nth-of-type(3) { width: 64%; }
 @keyframes shimmer {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }

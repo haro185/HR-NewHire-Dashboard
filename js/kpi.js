@@ -5,6 +5,9 @@
  */
 import { distinctValues } from './utils.js';
 import { monthKey } from './utils.js';
+import { animateNumber } from './animation.js';
+
+const previousValues = new Map();
 
 /** Pure computation — returns a plain object of KPI numbers. */
 export function computeKpis(filteredRecords) {
@@ -62,15 +65,39 @@ function setValue(labelId, value) {
   const card = labelEl.closest('.kpi-card');
   if (!card) return;
   const valueEl = card.querySelector('.kpi-card__value');
-  if (valueEl) valueEl.textContent = String(value);
+  if (valueEl) {
+    animateNumber(valueEl, value, { formatter: (number) => formatKpiValue(number, value) });
+  }
+
   const trendEl = card.querySelector('.kpi-card__trend');
   if (trendEl) {
-    const textNode = trendEl.childNodes[trendEl.childNodes.length - 1];
-    const text = ' Updated from current filters';
-    if (textNode && textNode.nodeType === Node.TEXT_NODE) {
-      textNode.textContent = text;
-    } else {
-      trendEl.appendChild(document.createTextNode(text));
-    }
+    trendEl.innerHTML = renderTrendBadge(previousValues.get(labelId), value);
   }
+  previousValues.set(labelId, value);
+}
+
+function formatKpiValue(number, target) {
+  const decimalPlaces = Number.isInteger(target) ? 0 : 1;
+  return number.toLocaleString(undefined, {
+    minimumFractionDigits: decimalPlaces,
+    maximumFractionDigits: decimalPlaces
+  });
+}
+
+function renderTrendBadge(previousValue, value) {
+  if (previousValue === undefined) {
+    return '<span class="kpi-card__trend-badge kpi-card__trend-badge--neutral">Current selection</span>';
+  }
+
+  const difference = value - previousValue;
+  if (difference === 0) {
+    return '<span class="kpi-card__trend-badge kpi-card__trend-badge--neutral">No change</span>';
+  }
+
+  const direction = difference > 0 ? 'up' : 'down';
+  const sign = difference > 0 ? '+' : '−';
+  return `<span class="kpi-card__trend-badge kpi-card__trend-badge--${direction}">
+    <span aria-hidden="true">${direction === 'up' ? '↑' : '↓'}</span>
+    ${sign}${formatKpiValue(Math.abs(difference), difference)} since last view
+  </span>`;
 }
