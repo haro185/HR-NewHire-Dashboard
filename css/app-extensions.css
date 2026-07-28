@@ -1,0 +1,140 @@
+/* app-extensions.css
+   Sprint 3/4 — purely additive styles. Existing CSS files (reset, variables,
+   layout, components, dashboard, responsive, dark) are untouched. */
+
+/* ---------- Filter Bar ---------- */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: flex-end;
+  padding: 18px 20px;
+}
+.filter-bar__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 150px;
+  flex: 1 1 150px;
+}
+.filter-bar__field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.filter-bar__field select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border, #e2e8f0);
+  background: var(--color-surface, #fff);
+  font-size: 14px;
+  color: inherit;
+}
+.filter-bar__actions {
+  display: flex;
+  align-items: flex-end;
+}
+.filter-bar__reset {
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border, #e2e8f0);
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary, #2563EB);
+  white-space: nowrap;
+}
+.filter-bar__reset:hover { background: rgba(37,99,235,0.08); }
+
+/* ---------- Charts ---------- */
+.chart-panel__body {
+  position: relative;
+  height: 280px;
+}
+.chart-panel__body canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ---------- Table: sort buttons, sticky header, badges, pagination ---------- */
+.data-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--color-surface, #fff);
+  z-index: 2;
+}
+.th-sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  color: inherit;
+}
+.th-sort-icon { font-size: 10px; color: var(--color-primary, #2563EB); }
+
+.table-panel__wrapper {
+  overflow: auto;
+  max-height: 560px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.status-badge--active { background: #dcfce7; color: #15803d; }
+.status-badge--probation { background: #fef3c7; color: #b45309; }
+.status-badge--resigned { background: #e5e7eb; color: #374151; }
+.status-badge--terminated { background: #fee2e2; color: #b91c1c; }
+
+.table-panel__pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--color-border, #e2e8f0);
+  font-size: 13px;
+}
+.table-panel__pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pagination-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border, #e2e8f0);
+  background: var(--color-surface, #fff);
+  cursor: pointer;
+  font-size: 13px;
+}
+.pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ---------- Upload (Sprint 4) ---------- */
+.icon-btn--upload { position: relative; }
+.upload-status {
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.upload-status--success { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+.upload-status--error { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+.upload-status--loading { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+
+@media (max-width: 720px) {
+  .filter-bar__field { flex: 1 1 100%; }
+}

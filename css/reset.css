@@ -1,82 +1,41 @@
-/* Minimal cross-browser reset */
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-}
-
+/* reset.css — minimal modern CSS reset */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body {
   min-height: 100vh;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+}
+img, picture, svg, video { display: block; max-width: 100%; }
+input, button, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: none; }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+table { border-collapse: collapse; width: 100%; }
+h1, h2, h3, h4, h5, h6, p { overflow-wrap: break-word; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-img,
-picture,
-video,
-canvas,
-svg {
-  display: block;
-  max-width: 100%;
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 12px;
+  background: #111827;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  z-index: 1000;
+  transition: top 0.15s ease;
 }
-
-input,
-button,
-textarea,
-select {
-  font: inherit;
-  color: inherit;
-}
-
-button {
-  cursor: pointer;
-  background: none;
-  border: none;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-ul,
-ol {
-  list-style: none;
-}
-
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-
-:focus:not(:focus-visible) {
-  outline: none;
-}
-
-:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
+.skip-link:focus { top: 12px; }

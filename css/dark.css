@@ -1,90 +1,27 @@
-/* Dark theme token overrides — no toggle logic (Sprint 2) */
+/* dark.css — dark theme variable overrides.
+   The dark-mode toggle in the sidebar is currently disabled (Sprint 6 roadmap item),
+   but the variables are defined now via a `.dark` class on <html> or <body> so that
+   enabling the toggle later only requires adding/removing this one class — no other
+   CSS file needs to change. */
 
-[data-theme="dark"] {
-  /* Brand */
-  --color-primary: #3b82f6;
-  --color-primary-hover: #60a5fa;
-  --color-primary-subtle: rgba(59, 130, 246, 0.15);
-  --color-secondary: #f8fafc;
-  --color-success: #34d399;
-  --color-success-subtle: rgba(52, 211, 153, 0.12);
-  --color-warning: #fbbf24;
-  --color-warning-subtle: rgba(251, 191, 36, 0.12);
-  --color-danger: #f87171;
-  --color-danger-subtle: rgba(248, 113, 113, 0.12);
+.dark {
+  --color-bg: #0F1115;
+  --color-surface: #181A20;
+  --color-surface-alt: #20232B;
 
-  /* Surfaces */
-  --color-bg: #0b1120;
-  --color-surface: #111827;
-  --color-surface-raised: #1e293b;
-  --color-border: #1e293b;
-  --color-border-subtle: #1a2332;
+  --color-text: #E5E7EB;
+  --color-text-muted: #9CA3AF;
+  --color-text-subtle: #6B7280;
 
-  /* Text */
-  --color-text: #f1f5f9;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #64748b;
-  --color-text-inverse: #0f172a;
-  --color-text-on-primary: #ffffff;
+  --color-border: #2A2D37;
+  --color-border-strong: #383B47;
 
-  /* Sidebar */
-  --color-sidebar-bg: #070d19;
-  --color-sidebar-border: rgba(255, 255, 255, 0.05);
-  --color-sidebar-text: #64748b;
-  --color-sidebar-text-active: #f8fafc;
-  --color-sidebar-hover: rgba(255, 255, 255, 0.05);
-  --color-sidebar-active: rgba(59, 130, 246, 0.2);
-
-  /* Focus & overlay */
-  --color-focus-ring: #3b82f6;
-  --color-overlay: rgba(0, 0, 0, 0.6);
-
-  /* Elevation */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.15);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.15);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
-  --shadow-card: var(--shadow-sm);
-  --shadow-card-hover: var(--shadow-md);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.5);
 }
 
-[data-theme="dark"] .kpi-card__icon--secondary {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--color-text-secondary);
-}
-
-[data-theme="dark"] .chart-panel__placeholder {
-  border-color: var(--color-border);
-  background: rgba(255, 255, 255, 0.02);
-}
-
-[data-theme="dark"] .chart-panel__placeholder-icon {
-  background: var(--color-surface-raised);
-}
-
-[data-theme="dark"] .search__input,
-[data-theme="dark"] .table-panel__search-input {
-  background: var(--color-surface-raised);
-  border-color: var(--color-border);
-  color: var(--color-text);
-}
-
-[data-theme="dark"] .header {
-  background: rgba(17, 24, 39, 0.85);
-}
-
-[data-theme="dark"] .data-table thead {
-  background: var(--color-surface);
-}
-
-[data-theme="dark"] .icon-btn__badge {
-  border-color: var(--color-surface);
-}
-
-[data-theme="dark"] .theme-toggle__track {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-[data-theme="dark"] .theme-toggle__thumb {
-  background: var(--color-text-muted);
-}
+.dark .status-badge--active { background: rgba(22, 163, 74, 0.2); color: #4ADE80; }
+.dark .status-badge--probation { background: rgba(245, 158, 11, 0.2); color: #FBBF24; }
+.dark .status-badge--resigned { background: rgba(148, 163, 184, 0.2); color: #CBD5E1; }
+.dark .status-badge--terminated { background: rgba(220, 38, 38, 0.2); color: #F87171; }
