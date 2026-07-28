@@ -10,6 +10,7 @@
  */
 export function animateNumber(el, to, { duration = 500, formatter = (n) => Math.round(n).toLocaleString() } = {}) {
   if (!el) return;
+  if (el._numberAnimationFrame) cancelAnimationFrame(el._numberAnimationFrame);
   const raw = el.textContent.replace(/[^\d.-]/g, '');
   const from = raw ? parseFloat(raw) : 0;
   const targetNum = typeof to === 'number' ? to : parseFloat(String(to).replace(/[^\d.-]/g, ''));
@@ -25,10 +26,13 @@ export function animateNumber(el, to, { duration = 500, formatter = (n) => Math.
     const eased = easeOutCubic(progress);
     const current = from + (targetNum - from) * eased;
     el.textContent = formatter(current);
-    if (progress < 1) requestAnimationFrame(tick);
-    else el.textContent = formatter(targetNum);
+    if (progress < 1) el._numberAnimationFrame = requestAnimationFrame(tick);
+    else {
+      el.textContent = formatter(targetNum);
+      delete el._numberAnimationFrame;
+    }
   }
-  requestAnimationFrame(tick);
+  el._numberAnimationFrame = requestAnimationFrame(tick);
 }
 
 /** Animate every [data-animate-target] number inside a container at once. */
@@ -65,11 +69,13 @@ export function showSkeleton(container, rows = 3) {
   if (!container) return;
   container.innerHTML = Array.from({ length: rows })
     .map(() => '<div class="skeleton-bar"></div>')
-    .join('');
+    .join('') + '<span class="visually-hidden" role="status">Loading content</span>';
   container.classList.add('is-loading-skeleton');
+  container.setAttribute('aria-busy', 'true');
 }
 
 export function hideSkeleton(container) {
   if (!container) return;
   container.classList.remove('is-loading-skeleton');
+  container.removeAttribute('aria-busy');
 }

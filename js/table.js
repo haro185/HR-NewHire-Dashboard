@@ -117,6 +117,10 @@ function updateSortIcons() {
   for (const col of COLUMNS) {
     const icon = tableEl.querySelector(`[data-field-icon="${col.field}"]`);
     if (!icon) continue;
+    icon.closest('th')?.setAttribute(
+      'aria-sort',
+      col.field === state.sortField && state.sortDirection === 'asc' ? 'ascending' : col.field === state.sortField ? 'descending' : 'none'
+    );
     if (col.field === state.sortField) {
       icon.textContent = state.sortDirection === 'asc' ? '▲' : '▼';
     } else {

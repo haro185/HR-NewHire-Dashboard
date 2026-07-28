@@ -44,6 +44,7 @@ function refreshAll() {
   const all = getAllRecords();
   const filtered = applyFilters(all, filterState);
 
+  renderActiveFilterChips();
   renderKpis(computeKpis(filtered));
   renderAllCharts(filtered);
   renderTable(filtered);
@@ -147,6 +148,52 @@ function bindFilterEvents() {
     resetTablePage();
     refreshAll();
   });
+
+  document.getElementById('filter-active-chips')?.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-filter-key]');
+    if (!chip) return;
+
+    const key = chip.dataset.filterKey;
+    const select = document.getElementById(FILTER_SELECTS[key]);
+    if (!select) return;
+
+    filterState[key] = 'all';
+    select.value = 'all';
+    resetTablePage();
+    refreshAll();
+  });
+}
+
+/** Renders presentation-only summaries of filters that are currently applied. */
+function renderActiveFilterChips() {
+  const container = document.getElementById('filter-active-chips');
+  if (!container) return;
+
+  const chips = Object.entries(FILTER_SELECTS)
+    .filter(([key]) => filterState[key] && filterState[key] !== 'all')
+    .map(([key, id]) => {
+      const select = document.getElementById(id);
+      const label = select?.labels?.[0]?.textContent || key;
+      const value = select?.selectedOptions?.[0]?.textContent || filterState[key];
+      const safeLabel = escapeHtml(label);
+      const safeValue = escapeHtml(value);
+      return `<button type="button" class="filter-chip" data-filter-key="${key}" aria-label="Remove ${safeLabel} filter: ${safeValue}">
+        <span>${safeLabel}: ${safeValue}</span><span class="filter-chip__remove" aria-hidden="true">×</span>
+      </button>`;
+    });
+
+  container.hidden = chips.length === 0;
+  container.innerHTML = chips.length
+    ? `<span class="filter-bar__active-label">Active filters</span>${chips.join('')}`
+    : '';
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 function bindSidebarToggle() {
