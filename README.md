@@ -1,100 +1,117 @@
-# HR New Hire Dashboard
+<div align="center">
 
-> Dashboard quản lý và phân tích dữ liệu **nhân sự mới (New Hire)** dành
-> cho bộ phận Nhân sự (HR) và Talent Acquisition (TA).
+# 🚀 HR New Hire Dashboard
 
-------------------------------------------------------------------------
+### Dashboard trực quan hóa dữ liệu **Nhân sự mới (New Hire)** dành cho HR & Talent Acquisition
 
-# 1. Giới thiệu
+<p align="center">
+<img src="docs/images/dashboard-preview.png" width="900">
+</p>
 
-## Tổng quan
+![HTML](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github)
 
-**HR New Hire Dashboard** là một ứng dụng Dashboard được xây dựng nhằm
-trực quan hóa dữ liệu tuyển dụng và nhân sự mới, giúp HR và Ban quản lý
-nhanh chóng nắm bắt tình hình onboarding, hiệu quả tuyển dụng và các chỉ
-số quan trọng.
+> 📊 Theo dõi • 📈 Phân tích • 📌 Báo cáo • 📂 Quản lý dữ liệu tuyển dụng
 
-Thay vì phải tổng hợp dữ liệu thủ công từ nhiều file Excel, Dashboard
-cung cấp giao diện trực quan, hiện đại và dễ sử dụng, hỗ trợ theo dõi
-toàn bộ quá trình tuyển mới theo thời gian thực (hoặc dữ liệu được cập
-nhật định kỳ).
+</div>
 
-Dự án được phát triển theo mô hình **Static Web Application**, không yêu
-cầu cài đặt backend và có thể chạy trực tiếp trên trình duyệt.
+---
 
-------------------------------------------------------------------------
+# 📖 Giới thiệu
 
-# 2. Mục tiêu
+**HR New Hire Dashboard** là ứng dụng Dashboard được xây dựng nhằm trực quan hóa dữ liệu nhân sự mới, giúp bộ phận **Talent Acquisition**, **HRBP** và **HR Manager** theo dõi toàn bộ quá trình tuyển dụng và onboarding chỉ trên một màn hình.
 
--   Theo dõi số lượng nhân sự mới.
--   Phân tích dữ liệu tuyển dụng theo nhiều chiều.
--   Hỗ trợ báo cáo nhanh.
--   Chuẩn hóa dữ liệu tuyển dụng.
--   Nâng cao khả năng ra quyết định dựa trên dữ liệu.
+Thay vì tổng hợp số liệu thủ công từ nhiều file Excel, Dashboard cung cấp giao diện hiện đại, trực quan và dễ sử dụng, giúp tiết kiệm thời gian xử lý báo cáo cũng như hỗ trợ ra quyết định dựa trên dữ liệu.
 
-------------------------------------------------------------------------
+---
 
-# 3. Đối tượng sử dụng
+# ✨ Mục tiêu
 
--   Talent Acquisition
--   HRBP
--   HR Executive
--   HR Manager
--   Ban Giám đốc
--   Bộ phận Điều hành
+- 🎯 Theo dõi số lượng nhân sự mới
+- 📊 Phân tích hiệu quả tuyển dụng
+- 📈 Quan sát xu hướng theo thời gian
+- ⚡ Tự động hóa báo cáo
+- 📁 Chuẩn hóa dữ liệu tuyển dụng
+- 💡 Hỗ trợ ra quyết định
 
-------------------------------------------------------------------------
+---
 
-# 4. Tính năng
+# 👥 Đối tượng sử dụng
 
-## Dashboard tổng quan
+| Vai trò | Mục đích |
+|---------|----------|
+| Talent Acquisition | Theo dõi tuyển dụng |
+| HR Executive | Báo cáo nhân sự |
+| HRBP | Phân tích dữ liệu |
+| HR Manager | Quản trị nguồn lực |
+| Ban Giám đốc | Theo dõi KPI |
 
--   KPI tổng số nhân sự mới
--   Biểu đồ xu hướng
--   Dashboard responsive
--   Giao diện hiện đại
+---
 
-## Bộ lọc
+# 🌟 Tính năng
 
--   Theo năm
--   Theo tháng
--   Theo phòng ban
--   Theo vị trí
--   Theo trạng thái
+## 📊 Dashboard tổng quan
 
-## Trực quan dữ liệu
+- KPI tổng số nhân sự mới
+- Dashboard theo thời gian
+- Responsive
+- Giao diện hiện đại
 
--   Bar Chart
--   Line Chart
--   Pie Chart (nếu được triển khai)
--   KPI Card
+---
 
-## Khả năng mở rộng
+## 🔍 Bộ lọc thông minh
 
--   Thêm Dashboard mới
--   Kết nối API
--   Đọc dữ liệu Excel/CSV/JSON
--   Export dữ liệu
+- Theo năm
+- Theo tháng
+- Theo phòng ban
+- Theo vị trí
+- Theo trạng thái
 
-------------------------------------------------------------------------
+---
 
-# 5. Kiến trúc dự án
+## 📈 Trực quan dữ liệu
 
-``` text
-HR-NewHire-Dashboard/
+- 📊 Bar Chart
+- 📈 Line Chart
+- 🥧 Pie Chart
+- 📋 KPI Card
+
+---
+
+## ⚙️ Khả năng mở rộng
+
+- Thêm Dashboard mới
+- Kết nối API
+- Google Sheets
+- Excel
+- CSV
+- JSON
+- Export Excel
+- Export PDF
+
+---
+
+# 🏗️ Kiến trúc dự án
+
+```text
+HR-NewHire-Dashboard
 │
 ├── css/
 │   ├── style.css
-│   └── ...
+│   ├── components.css
+│   └── themes.css
 │
 ├── js/
 │   ├── app.js
 │   ├── chart.js
+│   ├── utils.js
 │   └── ...
 │
 ├── data/
-│   ├── *.json
-│   ├── *.csv
+│   ├── employee.json
+│   ├── newhire.csv
 │   └── ...
 │
 ├── docs/
@@ -104,122 +121,196 @@ HR-NewHire-Dashboard/
 └── README.md
 ```
 
-------------------------------------------------------------------------
+---
 
-# 6. Công nghệ sử dụng
+# 🛠️ Công nghệ
 
-  Công nghệ       Mục đích
-  --------------- -----------------------
-  HTML5           Giao diện
-  CSS3            Thiết kế
-  JavaScript      Xử lý logic
-  Chart Library   Trực quan hóa dữ liệu
-  Git & GitHub    Quản lý mã nguồn
+| Công nghệ | Vai trò |
+|------------|----------------|
+| HTML5 | Xây dựng giao diện |
+| CSS3 | Thiết kế UI |
+| JavaScript | Xử lý dữ liệu |
+| Chart.js | Vẽ biểu đồ |
+| Git | Quản lý phiên bản |
+| GitHub | Quản lý source code |
 
-------------------------------------------------------------------------
+---
 
-# 7. Cách chạy dự án
+# 🚀 Cài đặt
 
-## Clone
+## Clone Repository
 
-``` bash
+```bash
 git clone https://github.com/haro185/HR-NewHire-Dashboard.git
 ```
 
-``` bash
+```bash
 cd HR-NewHire-Dashboard
 ```
 
+---
+
+## Chạy Dashboard
+
 ### Cách 1
 
-Mở trực tiếp `index.html`.
+Mở trực tiếp
+
+```
+index.html
+```
 
 ### Cách 2
 
-Sử dụng VS Code + Live Server.
+Sử dụng VS Code
 
-------------------------------------------------------------------------
+```
+Right Click
+        ↓
+Open With Live Server
+```
 
-# 8. Luồng hoạt động
+---
 
-1.  Người dùng mở Dashboard.
-2.  Dashboard đọc dữ liệu từ thư mục `data`.
-3.  JavaScript xử lý dữ liệu.
-4.  Dashboard render KPI và biểu đồ.
-5.  Người dùng lọc dữ liệu và xem báo cáo.
+# 🔄 Luồng xử lý
 
-------------------------------------------------------------------------
+```text
+Người dùng
+      │
+      ▼
+index.html
+      │
+      ▼
+Đọc dữ liệu
+(data)
+      │
+      ▼
+JavaScript xử lý
+      │
+      ▼
+Render Dashboard
+      │
+      ▼
+Hiển thị KPI + Charts
+```
 
-# 9. Dữ liệu
+---
+
+# 📂 Dữ liệu
+
+Dashboard hỗ trợ dữ liệu:
+
+- JSON
+- CSV
+- Excel
+- API (trong tương lai)
 
 Khuyến nghị:
 
--   Chuẩn hóa định dạng.
--   Không chứa dữ liệu nhạy cảm.
--   Có dữ liệu mẫu để demo.
+✅ Chuẩn hóa dữ liệu
 
-------------------------------------------------------------------------
+✅ Không chứa dữ liệu nhạy cảm
 
-# 10. Roadmap
+✅ Có file dữ liệu mẫu
 
--   [ ] Dark Mode
--   [ ] Xuất Excel
--   [ ] Xuất PDF
--   [ ] Kết nối Google Sheets
--   [ ] Kết nối API
--   [ ] Dashboard theo phòng ban
--   [ ] Dashboard theo nguồn tuyển dụng
--   [ ] Dashboard theo tỷ lệ nghỉ việc
--   [ ] Responsive Mobile
+---
 
-------------------------------------------------------------------------
+# 📸 Demo
 
-# 11. Quy trình đóng góp
+| Dashboard |
+|-----------|
+| *(Thêm ảnh tại đây)* |
 
-``` text
-Fork
-   ↓
+```
+docs/images/dashboard.png
+```
+
+---
+
+# 🗺️ Roadmap
+
+- [x] Dashboard cơ bản
+- [x] Responsive
+- [x] KPI Cards
+- [x] Biểu đồ
+- [ ] Dark Mode
+- [ ] Export Excel
+- [ ] Export PDF
+- [ ] Google Sheets
+- [ ] API
+- [ ] Authentication
+- [ ] Dashboard nhiều module
+
+---
+
+# 🤝 Đóng góp
+
+```text
+Fork Repository
+        │
+        ▼
 Create Branch
-   ↓
+        │
+        ▼
 Coding
-   ↓
+        │
+        ▼
 Testing
-   ↓
+        │
+        ▼
 Commit
-   ↓
+        │
+        ▼
 Push
-   ↓
+        │
+        ▼
 Pull Request
 ```
 
-------------------------------------------------------------------------
+---
 
-# 12. Changelog
+# 📜 Changelog
 
-Lịch sử thay đổi được ghi tại `CHANGELOG.md`.
+Chi tiết thay đổi được lưu tại:
 
-------------------------------------------------------------------------
+```
+CHANGELOG.md
+```
 
-# 13. License
+---
 
-Hiện tại dự án chưa khai báo License.
+# 📄 License
 
-Khuyến nghị sử dụng:
+Hiện dự án chưa khai báo License.
 
--   MIT License (Open Source)
--   Proprietary (Nội bộ doanh nghiệp)
+Khuyến nghị:
 
-------------------------------------------------------------------------
+- MIT License
+- Apache 2.0
+- Proprietary License
 
-# 14. Tác giả
+---
 
-**Hảo Trần (Haro)**
+# 👨‍💻 Tác giả
 
-Talent Acquisition \| HR Analytics \| HR Tech
+## Hảo Trần (Haro)
 
-LinkedIn: https://www.linkedin.com/in/haotx/
-GitHub: https://github.com/haro185
+**Talent Acquisition • HR Analytics • HR Tech**
 
-------------------------------------------------------------------------
+🔗 LinkedIn
 
-> Nếu dự án hữu ích, hãy ⭐ repository để ủng hộ quá trình phát triển.
+> https://www.linkedin.com/in/haotx/
+
+🔗 GitHub
+
+> https://github.com/haro185
+
+---
+
+<div align="center">
+
+### ⭐ Nếu dự án hữu ích, hãy Star Repository để ủng hộ nhé!
+
+Made with ❤️ by Haro
+
+</div>
