@@ -29,3 +29,27 @@
 - Added `js/drilldown.js` — cross-chart/cross-filter pub-sub; every visualization module reports clicks here instead of touching filter state directly.
 - Added `js/animation.js` — number count-up animation, fade-in, loading skeleton/shimmer helpers.
 - Did not modify `filter.js`, `upload.js`, `data.js`, `table.js`, or `kpi.js`; `charts.js` (the original 6 charts) is untouched code-wise but visually upgraded via global Chart.js defaults.
+
+## Hotfix — Excel Import Column Mapping
+- Fixed `normalizeText()` (js/utils.js): the Vietnamese letter "đ" is a distinct
+  Unicode character (U+0111), not a combining-diacritic form, so it was not
+  being stripped by `.normalize('NFD')`. This caused the header
+  "Ngày bắt đầu làm việc" to fail matching the `startDate` alias
+  ("ngay bat dau lam viec"), producing the false
+  "could not recognize required column(s): startDate" warning on import.
+- Fixed `toIsoDate()` (js/upload.js): the anchored regex only matched a bare
+  "DD/MM/YYYY" string. Real exports often prefix the date with a Vietnamese
+  weekday label (e.g. "Thứ Hai, ngày 13/10/2025"), which silently failed to
+  parse. The regex now searches for a DD/MM/YYYY pattern anywhere in the
+  cell text, with range validation to avoid false positives.
+- Fixed `mapHeaderToField()` (js/upload.js): the loose "contains" fallback
+  caused a false match — "Ngày phỏng vấn" (interview date) was being mapped
+  onto `department` because Vietnamese diacritic-stripping collapses "phòng"
+  (department/room) and "phỏng" (as in "phỏng vấn") to the same ASCII string
+  "phong". The fallback now requires the match to anchor at the start of the
+  header and prefers the longest matching alias, eliminating the collision
+  while keeping short department aliases working for real department headers.
+- Verified against the user's actual 121-row "Nhân sự mới" export: 0 missing
+  required columns, 0 empty startDate/department/position/employeeName after
+  the fix (previously all rows lost their department value due to the second
+  bug above).

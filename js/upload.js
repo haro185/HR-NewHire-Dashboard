@@ -43,11 +43,24 @@ const ALIAS_LOOKUP = buildAliasLookup();
 function mapHeaderToField(header) {
   const norm = normalizeText(header);
   if (ALIAS_LOOKUP.has(norm)) return ALIAS_LOOKUP.get(norm);
-  // Loose contains-match fallback for slightly different phrasing.
+
+  // Loose fallback for slightly different phrasing (e.g. "Phòng ban" vs "Phòng/Nhóm").
+  // IMPORTANT: match only at the START of the header, not "contains anywhere".
+  // Vietnamese diacritic-stripping collapses distinct words to the same ASCII form
+  // (e.g. "phòng" [room/department] and "phỏng" [as in "phỏng vấn" = interview] both
+  // normalize to "phong"), so a naive `.includes()` check would wrongly map a column
+  // like "Ngày phỏng vấn" (interview date) onto the "department" field. Requiring the
+  // match to anchor at the start of the header keeps short, common aliases (like
+  // "phong") useful for real department headers while rejecting incidental matches
+  // buried in the middle of an unrelated header.
+  let bestMatch = null;
   for (const [alias, field] of ALIAS_LOOKUP.entries()) {
-    if (norm.includes(alias) || alias.includes(norm)) return field;
+    if (norm.startsWith(alias) || alias.startsWith(norm)) {
+      // Prefer the longest matching alias so more specific phrases win over short ones.
+      if (!bestMatch || alias.length > bestMatch.alias.length) bestMatch = { alias, field };
+    }
   }
-  return null;
+  return bestMatch ? bestMatch.field : null;
 }
 
 /** Convert an Excel serial date or arbitrary date string/Date to "YYYY-MM-DD". */
@@ -60,12 +73,19 @@ function toIsoDate(value) {
     if (parsed) return `${parsed.y}-${String(parsed.m).padStart(2, '0')}-${String(parsed.d).padStart(2, '0')}`;
   }
   const str = String(value).trim();
-  // Try DD/MM/YYYY or D/M/YYYY (common Vietnamese format)
-  const dmy = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+  // Find DD/MM/YYYY (or D-M-YYYY, D.M.YYYY) ANYWHERE in the string — not anchored —
+  // because real-world exports often prefix the date with a Vietnamese weekday label,
+  // e.g. "Thứ Hai, ngày 13/10/2025" or "Ngày 05/01/1982".
+  const dmy = str.match(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);
   if (dmy) {
     let [, d, m, y] = dmy;
     if (y.length === 2) y = `20${y}`;
-    return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+    const dNum = parseInt(d, 10);
+    const mNum = parseInt(m, 10);
+    // Guard against false-positive matches (e.g. stray numbers) with basic range checks.
+    if (dNum >= 1 && dNum <= 31 && mNum >= 1 && mNum <= 12) {
+      return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+    }
   }
   const parsedDate = new Date(str);
   if (!isNaN(parsedDate.getTime())) return isoFromDate(parsedDate);

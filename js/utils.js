@@ -69,7 +69,9 @@ export function normalizeText(str) {
   return String(str ?? '')
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // strip diacritics
+    .replace(/[\u0300-\u036f]/g, '') // strip combining diacritics (á, à, ầ, ộ, ...)
+    .replace(/đ/g, 'd')              // "đ" is a distinct letter, NOT decomposable via NFD — must fold explicitly
+    .replace(/\s+/g, ' ')            // collapse repeated whitespace (e.g. multi-space headers)
     .trim();
 }
 
