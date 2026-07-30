@@ -23,10 +23,13 @@ import {
   upgradeChartEngineDefaults, renderGrowthChart, renderRankingChart, renderLocationDonut,
   setGrowthGranularity, setRankingLimit, getRankingLimit, exportChartAsPng
 } from './visualization.js';
-import { renderHeatmap } from './heatmap.js';
+import { renderHeatmap, setHeatmapMonthRange } from './heatmap.js';
 import { renderTimeline, setTimelineZoom } from './timeline.js';
 import { onDrilldown, drilldownToFilterPatch, resetDrilldown, getActiveDrilldown } from './drilldown.js';
 import { animateAllNumbers } from './animation.js';
+
+// Language toggle
+import { getLanguage, setLanguage, translateStaticDom, t } from './i18n.js';
 
 let filterState = createDefaultFilterState();
 
@@ -177,14 +180,14 @@ function renderActiveFilterChips() {
       const value = select?.selectedOptions?.[0]?.textContent || filterState[key];
       const safeLabel = escapeHtml(label);
       const safeValue = escapeHtml(value);
-      return `<button type="button" class="filter-chip" data-filter-key="${key}" aria-label="Remove ${safeLabel} filter: ${safeValue}">
+      return `<button type="button" class="filter-chip" data-filter-key="${key}" aria-label="${t('filters.removeChip', { label: safeLabel, value: safeValue })}">
         <span>${safeLabel}: ${safeValue}</span><span class="filter-chip__remove" aria-hidden="true">×</span>
       </button>`;
     });
 
   container.hidden = chips.length === 0;
   container.innerHTML = chips.length
-    ? `<span class="filter-bar__active-label">Active filters</span>${chips.join('')}`
+    ? `<span class="filter-bar__active-label">${t('filters.active')}</span>${chips.join('')}`
     : '';
 }
 
@@ -216,6 +219,103 @@ function bindSidebarToggle() {
 }
 
 /* ===================================================================
+ * Language toggle (English / Tiếng Việt)
+ * =================================================================== */
+function updateLangToggleUi() {
+  const lang = getLanguage();
+  document.querySelectorAll('#lang-toggle [data-lang-option]').forEach((el) => {
+    el.classList.toggle('is-active', el.dataset.langOption === lang);
+  });
+}
+
+function bindLanguageToggle() {
+  const btn = document.getElementById('lang-toggle');
+  if (!btn) return;
+  updateLangToggleUi();
+
+  btn.addEventListener('click', (e) => {
+    const option = e.target.closest('[data-lang-option]');
+    const nextLang = option ? option.dataset.langOption : (getLanguage() === 'en' ? 'vi' : 'en');
+    if (nextLang === getLanguage()) return;
+    setLanguage(nextLang); // also re-translates every [data-i18n] element in the DOM
+    updateLangToggleUi();
+    // Every dynamic renderer (KPIs, charts, table, insights, heatmap, timeline,
+    // drilldown banner) generates its own text, so a full refresh picks up
+    // the new language everywhere in one pass — same pipeline as a filter change.
+    refreshAll();
+  });
+}
+
+/* ===================================================================
+ * Sidebar navigation — smooth-scroll to the matching dashboard section
+ * and keep the active link + mobile sidebar state in sync.
+ * =================================================================== */
+function bindSidebarNav() {
+  const links = document.querySelectorAll('.nav-list__link[data-nav-target]');
+  if (!links.length) return;
+
+  const scrollContainer = document.querySelector('.main');
+
+  links.forEach((link) => {
+    link.addEventListener('click', (e) => {
+      const targetId = link.dataset.navTarget;
+      const target = document.getElementById(targetId);
+      if (!target || !scrollContainer) return; // fall back to default anchor behavior if missing
+      e.preventDefault();
+
+      // `.main` is its own scroll container (overflow-y: auto), not the window,
+      // so compute the target's position relative to it directly rather than
+      // relying on offsetTop (which is relative to the nearest positioned
+      // ancestor, not necessarily this scroll container) or window.scrollTo
+      // (which has no effect here since the window itself never scrolls).
+      const targetRect = target.getBoundingClientRect();
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const top = targetRect.top - containerRect.top + scrollContainer.scrollTop - 16;
+      scrollContainer.scrollTo({ top, behavior: 'smooth' });
+
+      links.forEach((l) => {
+        l.classList.remove('nav-list__link--active');
+        l.removeAttribute('aria-current');
+      });
+      link.classList.add('nav-list__link--active');
+      link.setAttribute('aria-current', 'page');
+
+      // Close the mobile sidebar after navigating, same as picking any other action.
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      const toggleBtn = document.getElementById('sidebar-toggle');
+      if (sidebar?.classList.contains('is-open')) {
+        sidebar.classList.remove('is-open');
+        overlay?.classList.remove('is-visible');
+        toggleBtn?.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+
+  // Scroll-spy: highlight whichever section is currently most visible.
+  const sections = Array.from(links)
+    .map((l) => document.getElementById(l.dataset.navTarget))
+    .filter(Boolean);
+  if (!sections.length || !('IntersectionObserver' in window)) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries.filter((en) => en.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+      if (!visible.length) return;
+      const activeId = visible[0].target.id;
+      links.forEach((l) => {
+        const isActive = l.dataset.navTarget === activeId;
+        l.classList.toggle('nav-list__link--active', isActive);
+        if (isActive) l.setAttribute('aria-current', 'page');
+        else l.removeAttribute('aria-current');
+      });
+    },
+    { root: scrollContainer, rootMargin: '-30% 0px -55% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] }
+  );
+  sections.forEach((s) => observer.observe(s));
+}
+
+/* ===================================================================
  * Sprint 6 — Visualization controls wiring
  * =================================================================== */
 
@@ -244,6 +344,11 @@ function bindVisualizationControls() {
 
   bindSegmented('timeline-zoom-toggle', 'zoom', (zoom) => {
     setTimelineZoom(zoom);
+    refreshAll();
+  });
+
+  bindSegmented('heatmap-range-toggle', 'range', (range) => {
+    setHeatmapMonthRange(range === 'all' ? 'all' : parseInt(range, 10));
     refreshAll();
   });
 
@@ -292,12 +397,15 @@ function updateDrilldownBanner() {
   }
   banner.hidden = false;
   const label = active.multi ? active.label : `${active.field}: ${active.value}`;
-  text.textContent = `Drilled down by ${label} — every chart, KPI, and the table are filtered to match.`;
+  text.textContent = t('drilldown.text', { label });
 }
 
 async function init() {
+  translateStaticDom(); // apply saved/default language to static labels before first paint of dynamic content
   bindFilterEvents();
   bindSidebarToggle();
+  bindSidebarNav();
+  bindLanguageToggle();
   bindVisualizationControls();
   bindDrilldown();
   initUpload();
@@ -324,7 +432,7 @@ async function init() {
     if (el) {
       el.hidden = false;
       el.className = 'upload-status upload-status--error';
-      el.textContent = 'Could not load sample data. Try uploading a file instead.';
+      el.textContent = t('upload.sampleFailed');
     }
   }
 }

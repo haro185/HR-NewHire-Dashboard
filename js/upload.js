@@ -12,6 +12,7 @@
  */
 import { setRecords } from './data.js';
 import { normalizeText } from './utils.js';
+import { t } from './i18n.js';
 
 // Canonical field -> list of recognized header variants (English + Vietnamese), normalized.
 const FIELD_ALIASES = {
@@ -160,11 +161,11 @@ export async function handleUploadedFile(file) {
   if (!file) return;
   const ext = file.name.split('.').pop().toLowerCase();
   if (!['xlsx', 'xls', 'csv'].includes(ext)) {
-    showStatus(`Unsupported file type ".${ext}". Please upload .xlsx, .xls, or .csv.`, 'error');
+    showStatus(t('upload.unsupported', { ext }), 'error');
     return;
   }
 
-  showStatus(`Reading "${file.name}"…`, 'loading');
+  showStatus(t('upload.reading', { name: file.name }), 'loading');
 
   try {
     const buffer = await readFileAsArrayBuffer(file);
@@ -173,18 +174,14 @@ export async function handleUploadedFile(file) {
     const { records, missingRequired } = parseWorkbook(workbook);
 
     if (records.length === 0) {
-      showStatus('The file appears to be empty — no rows were found.', 'error');
+      showStatus(t('upload.empty'), 'error');
       return;
     }
 
     if (missingRequired.length > 0) {
-      showStatus(
-        `Imported ${records.length} row(s), but could not recognize required column(s): ${missingRequired.join(', ')}. ` +
-        `Some data may be incomplete — check your column headers.`,
-        'error'
-      );
+      showStatus(t('upload.missingRequired', { count: records.length, fields: missingRequired.join(', ') }), 'error');
     } else {
-      showStatus(`Imported ${records.length} row(s) from "${file.name}". Dashboard refreshed.`, 'success');
+      showStatus(t('upload.success', { count: records.length, name: file.name }), 'success');
     }
 
     // Single source of truth: this replaces the sample data entirely.
@@ -193,7 +190,7 @@ export async function handleUploadedFile(file) {
     setTimeout(hideStatus, 6000);
   } catch (err) {
     console.error(err);
-    showStatus(`Failed to read "${file.name}": ${err.message}`, 'error');
+    showStatus(t('upload.failed', { name: file.name, error: err.message }), 'error');
   }
 }
 

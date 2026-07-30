@@ -7,6 +7,7 @@
  */
 import { requestDrilldown } from './drilldown.js';
 import { colorForIndex } from './utils.js';
+import { t } from './i18n.js';
 
 const instances = {}; // key -> Chart.js instance (separate namespace from charts.js)
 let rankingMode = { department: 10 }; // 10 | 20 | 'all', per-chart
@@ -43,15 +44,14 @@ export function upgradeChartEngineDefaults() {
   Chart.defaults.elements.line.borderWidth = 2;
   Chart.defaults.maintainAspectRatio = false;
   Chart.defaults.responsive = true;
-
-  // Re-render on window resize using rAF to avoid layout thrash / excessive rerenders.
-  let resizeFrame = null;
-  window.addEventListener('resize', () => {
-    if (resizeFrame) cancelAnimationFrame(resizeFrame);
-    resizeFrame = requestAnimationFrame(() => {
-      Object.values(instances).forEach((c) => c.resize());
-    });
-  });
+  // Debounce Chart.js's OWN internal resize handling (it already watches the
+  // canvas's parent via ResizeObserver — no manual window "resize" listener
+  // needed). Adding a second, manual resize() call here previously fought
+  // with that internal observer: on browser zoom, both fired for the same
+  // event and each measured a canvas that the other had just resized,
+  // compounding into runaway growth. resizeDelay lets Chart.js coalesce
+  // rapid-fire resize/zoom events into a single, correctly-measured update.
+  Chart.defaults.resizeDelay = 100;
 }
 
 /** Destroy + recreate safety: always upsert instead of leaking chart instances. */
@@ -84,7 +84,7 @@ export function renderGrowthChart(analytics) {
     data: {
       labels: series.map((s) => s.label),
       datasets: [{
-        label: 'New Hires',
+        label: t('chart.newHiresLabel'),
         data: series.map((s) => s.value),
         backgroundColor: colorForIndex(0),
         borderRadius: 6,
@@ -126,7 +126,7 @@ export function renderRankingChart(kind, analytics, limit = 10) {
     data: {
       labels: list.map((e) => e.label),
       datasets: [{
-        label: capitalize(kind),
+        label: t(kind === 'department' ? 'filters.department' : 'filters.manager'),
         data: list.map((e) => e.value),
         backgroundColor: list.map((_, i) => colorForIndex(i)),
         borderRadius: 6

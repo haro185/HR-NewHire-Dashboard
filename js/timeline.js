@@ -1,12 +1,14 @@
 /**
  * timeline.js
  * Sprint 6 — Onboarding timeline. Every employee becomes one event on a
- * horizontal, scrollable timeline grouped by Month / Quarter / Year
- * ("zoom level" — implemented as a grouping switch rather than true
- * pinch-zoom, which keeps it fast and fully keyboard/touch accessible).
+ * scrollable timeline grouped by Month / Quarter / Year ("zoom level" —
+ * implemented as a grouping switch rather than true pinch-zoom, which keeps
+ * it fast and fully keyboard/touch accessible). Groups are ordered most
+ * recent first, matching how HR teams actually scan onboarding activity.
  */
-import { parseISODate, monthKey, monthLabel } from './utils.js';
+import { parseISODate, monthKey } from './utils.js';
 import { requestDrilldown } from './drilldown.js';
+import { t, formatMonth, formatQuarter } from './i18n.js';
 
 let zoomLevel = 'month'; // 'month' | 'quarter' | 'year'
 
@@ -22,7 +24,7 @@ export function renderTimeline(records) {
   if (!track) return;
 
   if (!records.length) {
-    track.innerHTML = '<p class="timeline-empty">No hires to display for the current filters.</p>';
+    track.innerHTML = `<p class="timeline-empty">${t('timeline.empty')}</p>`;
     return;
   }
 
@@ -31,17 +33,20 @@ export function renderTimeline(records) {
   track.innerHTML = groups.map((g) => `
     <div class="timeline-group">
       <button type="button" class="timeline-group__header" data-group-key="${g.key}" data-group-level="${zoomLevel}"
-        aria-label="Filter by ${g.label}, ${g.items.length} hire(s)">
-        <span class="timeline-group__label">${g.label}</span>
+        aria-label="${escapeHtml(g.label)}, ${g.items.length}">
+        <span class="timeline-group__label">${escapeHtml(g.label)}</span>
         <span class="timeline-group__count">${g.items.length}</span>
       </button>
       <div class="timeline-group__events">
         ${g.items.map((r) => `
           <div class="timeline-event" tabindex="0" role="listitem"
-            aria-label="${escapeHtml(r.employeeName)}, ${escapeHtml(r.position)}, ${escapeHtml(r.department)}, started ${r.startDate}">
+            aria-label="${escapeHtml(r.employeeName)}, ${escapeHtml(r.position)}, ${escapeHtml(r.department)}">
             <span class="timeline-event__dot" aria-hidden="true"></span>
-            <span class="timeline-event__name">${escapeHtml(r.employeeName)}</span>
-            <span class="timeline-event__meta">${escapeHtml(r.position)} · ${escapeHtml(r.department)}</span>
+            <div class="timeline-event__body">
+              <span class="timeline-event__name">${escapeHtml(r.employeeName)}</span>
+              <span class="timeline-event__meta">${escapeHtml(r.position)}</span>
+              <span class="timeline-event__dept">${escapeHtml(r.department)}</span>
+            </div>
           </div>
         `).join('')}
       </div>
@@ -75,15 +80,16 @@ function groupRecords(records, level) {
     } else if (level === 'quarter') {
       const q = Math.floor(d.getMonth() / 3) + 1;
       key = `${d.getFullYear()}-Q${q}`;
-      label = `Q${q} ${d.getFullYear()}`;
+      label = formatQuarter(key);
     } else {
       key = monthKey(r.startDate);
-      label = monthLabel(key);
+      label = formatMonth(key);
     }
     if (!buckets.has(key)) buckets.set(key, { key, label, items: [] });
     buckets.get(key).items.push(r);
   }
-  return [...buckets.values()].sort((a, b) => a.key.localeCompare(b.key));
+  // Most recent period first — matches how HR teams scan onboarding activity.
+  return [...buckets.values()].sort((a, b) => b.key.localeCompare(a.key));
 }
 
 function escapeHtml(str) {

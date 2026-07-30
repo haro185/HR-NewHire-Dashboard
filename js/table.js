@@ -1,22 +1,25 @@
 /**
  * table.js
- * Sprint 3 — Renders the New Hire Records table: sortable columns,
- * pagination (20 rows/page), sticky header (CSS), responsive wrapper.
+ * Renders the New Hire Records table: sortable columns, pagination
+ * (20 rows/page), sticky header (CSS), responsive wrapper.
  *
  * Receives already-filtered records from app.js; owns only sort + page state.
+ * Column labels and pagination text are re-translated on every render, so a
+ * language toggle (which triggers a normal refreshAll()) updates them too.
  */
 import { compareBy, formatDate, escapeHtml } from './utils.js';
+import { t } from './i18n.js';
 
 const PAGE_SIZE = 20;
 
 const COLUMNS = [
-  { field: 'employeeName', label: 'Name', type: 'string' },
-  { field: 'department', label: 'Department', type: 'string' },
-  { field: 'position', label: 'Position', type: 'string' },
-  { field: 'manager', label: 'Manager', type: 'string' },
-  { field: 'location', label: 'Location', type: 'string' },
-  { field: 'startDate', label: 'Hire Date', type: 'date' },
-  { field: 'status', label: 'Status', type: 'string' }
+  { field: 'employeeName', labelKey: 'table.col.name', type: 'string' },
+  { field: 'department', labelKey: 'table.col.department', type: 'string' },
+  { field: 'position', labelKey: 'table.col.position', type: 'string' },
+  { field: 'manager', labelKey: 'table.col.manager', type: 'string' },
+  { field: 'location', labelKey: 'table.col.location', type: 'string' },
+  { field: 'startDate', labelKey: 'table.col.hiredate', type: 'date' },
+  { field: 'status', labelKey: 'table.col.status', type: 'string' }
 ];
 
 let state = {
@@ -33,13 +36,15 @@ function ensureDom() {
   tableEl = document.querySelector('.data-table');
   if (!tableEl) return;
 
-  // Rebuild header with sortable buttons (extends existing markup, keeps classes).
+  // Build header structure once (click binding lives here); label TEXT is
+  // refreshed separately on every render via updateHeaderLabels() so a
+  // language toggle updates it without rebuilding the whole table.
   const thead = tableEl.querySelector('thead tr');
   if (thead) {
     thead.innerHTML = COLUMNS.map((col) => `
       <th scope="col">
         <button type="button" class="th-sort-btn" data-field="${col.field}" data-type="${col.type}">
-          ${escapeHtml(col.label)}
+          <span class="th-sort-label" data-label-for="${col.field}"></span>
           <span class="th-sort-icon" data-field-icon="${col.field}" aria-hidden="true"></span>
         </button>
       </th>
@@ -55,6 +60,13 @@ function ensureDom() {
     panel.appendChild(paginationEl);
   } else if (panel) {
     paginationEl = panel.querySelector('.table-panel__pagination');
+  }
+}
+
+function updateHeaderLabels() {
+  for (const col of COLUMNS) {
+    const labelEl = tableEl.querySelector(`[data-label-for="${col.field}"]`);
+    if (labelEl) labelEl.textContent = t(col.labelKey);
   }
 }
 
@@ -74,11 +86,12 @@ function onHeaderClick(e) {
 
 let lastRecords = [];
 
-/** Main entry point — called whenever the filtered dataset changes. */
+/** Main entry point — called whenever the filtered dataset changes (or the language toggles). */
 export function renderTable(records) {
   ensureDom();
   if (!tableEl) return;
   lastRecords = records;
+  updateHeaderLabels();
 
   const colType = COLUMNS.find((c) => c.field === state.sortField)?.type || 'string';
   const sorted = [...records].sort(compareBy(state.sortField, state.sortDirection, colType));
@@ -97,7 +110,7 @@ function renderRows(rows) {
   const tbody = tableEl.querySelector('tbody');
   if (!tbody) return;
   if (rows.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="${COLUMNS.length}" class="data-table__empty">No records match the current filters</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="${COLUMNS.length}" class="data-table__empty">${t('table.empty')}</td></tr>`;
     return;
   }
   tbody.innerHTML = rows.map((r) => `
@@ -135,11 +148,11 @@ function renderPagination(totalRows, totalPages) {
   const to = Math.min(state.page * PAGE_SIZE, totalRows);
 
   paginationEl.innerHTML = `
-    <p class="table-panel__pagination-info">Showing ${from}-${to} of ${totalRows} records</p>
+    <p class="table-panel__pagination-info">${t('table.showing', { from, to, total: totalRows })}</p>
     <div class="table-panel__pagination-controls">
-      <button type="button" class="pagination-btn" data-action="prev" ${state.page <= 1 ? 'disabled' : ''}>Prev</button>
-      <span class="pagination-current">Page ${state.page} / ${totalPages}</span>
-      <button type="button" class="pagination-btn" data-action="next" ${state.page >= totalPages ? 'disabled' : ''}>Next</button>
+      <button type="button" class="pagination-btn" data-action="prev" ${state.page <= 1 ? 'disabled' : ''}>${t('table.prev')}</button>
+      <span class="pagination-current">${t('table.page', { page: state.page, totalPages })}</span>
+      <button type="button" class="pagination-btn" data-action="next" ${state.page >= totalPages ? 'disabled' : ''}>${t('table.next')}</button>
     </div>
   `;
   paginationEl.querySelector('[data-action="prev"]')?.addEventListener('click', () => {

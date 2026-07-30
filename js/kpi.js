@@ -6,6 +6,7 @@
 import { distinctValues } from './utils.js';
 import { monthKey } from './utils.js';
 import { animateNumber } from './animation.js';
+import { t } from './i18n.js';
 
 const previousValues = new Map();
 
@@ -86,18 +87,18 @@ function formatKpiValue(number, target) {
 
 function renderTrendBadge(previousValue, value) {
   if (previousValue === undefined) {
-    return '<span class="kpi-card__trend-badge kpi-card__trend-badge--neutral">Current selection</span>';
+    return `<span class="kpi-card__trend-badge kpi-card__trend-badge--neutral">${t('kpi.currentSelection')}</span>`;
   }
 
   const difference = value - previousValue;
   if (difference === 0) {
-    return '<span class="kpi-card__trend-badge kpi-card__trend-badge--neutral">No change</span>';
+    return `<span class="kpi-card__trend-badge kpi-card__trend-badge--neutral">${t('kpi.noChange')}</span>`;
   }
 
   const direction = difference > 0 ? 'up' : 'down';
   const sign = difference > 0 ? '+' : '−';
   return `<span class="kpi-card__trend-badge kpi-card__trend-badge--${direction}">
     <span aria-hidden="true">${direction === 'up' ? '↑' : '↓'}</span>
-    ${sign}${formatKpiValue(Math.abs(difference), difference)} since last view
+    ${sign}${formatKpiValue(Math.abs(difference), difference)} ${t('kpi.sinceLastView')}
   </span>`;
 }

@@ -218,35 +218,37 @@ export function invalidateAnalyticsCache() {
  * Tooltip) rendered into the new "#advanced-kpi-grid" section added in
  * index.html. Does not touch or replace the original kpi.js cards.
  * =================================================================== */
+import { t, formatMonth } from './i18n.js';
+
 const ADVANCED_KPI_DEFS = [
   {
     id: 'akpi-monthly-growth',
-    title: 'Monthly Hiring Growth',
-    tooltip: 'Percentage change in new hires vs. the previous month.',
+    titleKey: 'advkpi.monthlyGrowth',
+    tooltipKey: 'advkpi.monthlyGrowth.tip',
     get: (a) => ({ value: `${a.growth.monthly.percent > 0 ? '+' : ''}${a.growth.monthly.percent}%`, status: statusFromPercent(a.growth.monthly.percent) })
   },
   {
     id: 'akpi-quarterly-growth',
-    title: 'Quarterly Hiring Growth',
-    tooltip: 'Percentage change in new hires vs. the previous quarter.',
+    titleKey: 'advkpi.quarterlyGrowth',
+    tooltipKey: 'advkpi.quarterlyGrowth.tip',
     get: (a) => ({ value: `${a.growth.quarterly.percent > 0 ? '+' : ''}${a.growth.quarterly.percent}%`, status: statusFromPercent(a.growth.quarterly.percent) })
   },
   {
     id: 'akpi-yearly-growth',
-    title: 'Yearly Hiring Growth',
-    tooltip: 'Percentage change in new hires vs. the previous year.',
+    titleKey: 'advkpi.yearlyGrowth',
+    tooltipKey: 'advkpi.yearlyGrowth.tip',
     get: (a) => ({ value: `${a.growth.yearly.percent > 0 ? '+' : ''}${a.growth.yearly.percent}%`, status: statusFromPercent(a.growth.yearly.percent) })
   },
   {
     id: 'akpi-top-department',
-    title: 'Top Hiring Department',
-    tooltip: 'The department with the most new hires in the current selection.',
+    titleKey: 'advkpi.topDept',
+    tooltipKey: 'advkpi.topDept.tip',
     get: (a) => ({ value: a.top.department ? `${a.top.department.label} (${a.top.department.value})` : '—', status: 'neutral' })
   },
   {
     id: 'akpi-fastest-growing',
-    title: 'Fastest Growing Department',
-    tooltip: 'Department with the largest month-over-month percentage increase.',
+    titleKey: 'advkpi.fastestGrowing',
+    tooltipKey: 'advkpi.fastestGrowing.tip',
     get: (a) => ({
       value: a.fastestGrowingDepartment ? `${a.fastestGrowingDepartment.category} (+${a.fastestGrowingDepartment.percent}%)` : '—',
       status: a.fastestGrowingDepartment && a.fastestGrowingDepartment.percent > 0 ? 'positive' : 'neutral'
@@ -254,21 +256,21 @@ const ADVANCED_KPI_DEFS = [
   },
   {
     id: 'akpi-dept-concentration',
-    title: 'Department Concentration',
-    tooltip: 'How concentrated hiring is across departments (0 = evenly spread, 100 = all in one department).',
+    titleKey: 'advkpi.concentration',
+    tooltipKey: 'advkpi.concentration.tip',
     get: (a) => ({ value: `${a.concentration.department}/100`, status: a.concentration.department >= 50 ? 'negative' : a.concentration.department >= 30 ? 'neutral' : 'positive' })
   },
   {
     id: 'akpi-manager-workload',
-    title: 'Manager Workload (avg ± std dev)',
-    tooltip: 'Average number of hires per manager and how much that varies.',
+    titleKey: 'advkpi.workload',
+    tooltipKey: 'advkpi.workload.tip',
     get: (a) => ({ value: `${a.managerWorkload.mean} ± ${a.managerWorkload.stdDev}`, status: a.managerWorkload.overloaded.length > 0 ? 'negative' : 'positive' })
   },
   {
     id: 'akpi-peak-month',
-    title: 'Hiring Peak Month',
-    tooltip: 'The single month with the highest number of new hires.',
-    get: (a) => ({ value: a.peakMonth ? `${a.peakMonth.label} (${a.peakMonth.value})` : '—', status: 'neutral' })
+    titleKey: 'advkpi.peakMonth',
+    tooltipKey: 'advkpi.peakMonth.tip',
+    get: (a) => ({ value: a.peakMonth ? `${formatMonth(a.peakMonth.key)} (${a.peakMonth.value})` : '—', status: 'neutral' })
   }
 ];
 
@@ -278,17 +280,19 @@ function statusFromPercent(p) {
   return 'neutral';
 }
 
-/** Renders the advanced KPI grid. Call from app.js after computeAnalytics(). */
+/** Renders the advanced KPI grid. Call from app.js after computeAnalytics(), and again on language change. */
 export function renderAdvancedKpis(analytics) {
   const grid = document.getElementById('advanced-kpi-grid');
   if (!grid) return;
 
   grid.innerHTML = ADVANCED_KPI_DEFS.map((def) => {
     const { value, status } = def.get(analytics);
+    const title = t(def.titleKey);
+    const tooltip = t(def.tooltipKey);
     return `
       <article class="card advanced-kpi-card advanced-kpi-card--${status}" tabindex="0"
-        aria-label="${def.title}: ${value}" title="${def.tooltip}">
-        <p class="advanced-kpi-card__title">${def.title}</p>
+        aria-label="${title}: ${value}" title="${tooltip}">
+        <p class="advanced-kpi-card__title">${title}</p>
         <p class="advanced-kpi-card__value" data-animate-target>${value}</p>
         <span class="advanced-kpi-card__status-dot" aria-hidden="true"></span>
       </article>

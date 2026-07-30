@@ -88,8 +88,14 @@
 .chart-panel__body {
   position: relative;
   height: 280px;
+  max-height: 280px;
+  overflow: hidden;
+  flex: none; /* ghi đè flex:1 từ dashboard.css — nếu không, flex-basis:0% sẽ
+                 vô hiệu hoá height ở trên, làm khung chart co về gần 0 */
 }
 .chart-panel__body canvas {
+  position: absolute;
+  inset: 0;
   width: 100% !important;
   height: 100% !important;
 }

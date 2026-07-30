@@ -53,3 +53,40 @@
   required columns, 0 empty startDate/department/position/employeeName after
   the fix (previously all rows lost their department value due to the second
   bug above).
+
+## Update — Bilingual (EN/VI) Dashboard + UX Fixes
+- Added `js/i18n.js`: full English/Vietnamese dictionary (~90 keys), language
+  persisted in localStorage, `t()` translator with `{{var}}` interpolation,
+  and language-aware month/quarter formatters used by charts, heatmap, and
+  timeline instead of hardcoded English date labels.
+- Added a language toggle button (`#lang-toggle`, VI/EN) in the sidebar;
+  switching language re-translates all static labels and re-renders every
+  dynamic view (KPIs, charts, table, insights, warnings, heatmap, timeline)
+  in one pass, the same pipeline as a filter change.
+- Tagged all static text in `index.html` with `data-i18n` / `data-i18n-attr`
+  (79+ keys verified present in both languages); updated `insight.js`,
+  `kpi.js`, `analytics.js`, `table.js`, `upload.js`, `visualization.js`,
+  `heatmap.js` to generate their dynamic text via `t()` instead of hardcoded
+  strings.
+- Fixed Growth & Rankings charts stretching on browser zoom: removed a
+  manual `window.resize` listener in `visualization.js` that fought with
+  Chart.js's own ResizeObserver-based resizing (root cause of the runaway
+  growth); added `Chart.defaults.resizeDelay` and firmer CSS containment
+  (`overflow:hidden` + absolutely-positioned canvas). Also shrank those four
+  charts via a new `.chart-panel__body--compact` class (220px/280px).
+- Fixed the Hiring Heatmap: added a 6 months / 12 months / All time range
+  filter so it no longer sprawls from 2024 to present by default; switched
+  the column grid from fixed 34px cells to `minmax(30px, 1fr)` so it fills
+  the card width instead of leaving empty space on the right.
+- Reworked the Onboarding Timeline: groups now sort most-recent-first
+  (previously oldest-first), and events render as a balanced auto-fill card
+  grid instead of wrapped pill tags.
+- Reworded the "future start date" warning: previously described these as
+  generic "records"; since a future start date means the person hasn't
+  actually started yet, they're now described as "Ứng viên" (candidates) /
+  "candidate(s)" — incoming hires, not active employees.
+- Wired the left sidebar navigation: clicking a menu item now smooth-scrolls
+  the actual scroll container (`.main`, which uses `overflow-y: auto` — not
+  the window) to the matching section, updates the active link state, closes
+  the mobile sidebar, and an IntersectionObserver-based scroll-spy keeps the
+  active link in sync while scrolling.
