@@ -219,10 +219,10 @@ Khuyến nghị:
 
 | Dashboard |
 |-----------|
-| *(Thêm ảnh tại đây)* |
+| ![](./images/dashboard.png) |
 
 ```
-c:\Users\hao.tx\Downloads\localhost_1001_ (1).png
+
 ```
 
 ---
